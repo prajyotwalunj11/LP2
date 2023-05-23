@@ -1,0 +1,70 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class Job
+{
+public:
+    int start, finish, profit;
+};
+
+bool compare(Job a, Job b)
+{
+    return a.finish < b.finish;
+}
+
+int fMProfit(Job *arr, int n)
+{
+    // sort kara finish time nusar
+    sort(arr, arr + n, compare);
+
+
+    int *dp = new int[n];
+    // for fist activty
+    dp[0] = arr[0].profit;//ji pan pahili aahe tyacha profit pan pahilach asanar aahe
+
+    for (int i = 1; i < n; i++)
+    {
+        // go for every activity
+        int including = arr[i].profit;
+        int lNConflict = -1;//latest Non Conflict
+
+
+        // magachya activity cha finish time same or kami sathi shodha
+        for (int j = i - 1; j >= 0; j--)
+        {
+            if (arr[j].finish <= arr[i].start)
+            {
+                lNConflict = j;
+                break;
+            }
+        }
+
+        if (lNConflict != -1)
+        {
+            including += dp[lNConflict];
+        }
+
+        dp[i] = max(including, dp[i - 1]);
+    }
+
+    int ans = dp[n - 1];
+    delete[] dp;
+    return ans;
+}
+
+int main()
+{
+    // Job arr[] = {{2, 5, 50}, {1, 2, 20}, {6, 9, 70}, {2, 50, 400}};
+    Job *arr = new Job[4];
+    for (int i = 0; i < 4; i++)
+    {
+        int startDate, endDate, totalProfit;
+        cin >> startDate >> endDate >> totalProfit;
+        arr[i].start = startDate;
+        arr[i].finish = endDate;
+        arr[i].profit = totalProfit;
+    }
+
+    cout << "Maximum profit is :" << fMProfit(arr, 4);
+    return 0;
+}
