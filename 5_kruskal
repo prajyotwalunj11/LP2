@@ -1,0 +1,147 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class Edge
+{
+public:
+    int source;
+    int dest;
+    int weight;
+};
+
+int findParent(int v, int *parent)
+{
+    if (parent[v] == v)
+    {
+        return v;
+    }
+
+    return findParent(parent[v], parent);
+}
+
+bool compare(Edge e1, Edge e2)
+{
+    return e1.weight < e2.weight; // increasing order madhye sort sathi
+}
+
+void kruskals(Edge *input, int n, int E)
+{
+    // sort the input array based on wt
+
+    sort(input, input + E, compare); // start aani end dilay
+
+    Edge *output = new Edge[n - 1];
+    int *parent = new int[n];
+
+    for (int i = 0; i < n; i++)
+    {
+        parent[i] = i;
+    }
+
+    int count = 0;
+    int i = 0;
+
+    while (count != n - 1)
+    {
+        Edge currentEdge = input[i];
+
+        // chek if we can add edge in mst or not
+
+        int sourceParent = findParent(currentEdge.source, parent);
+        int destParent = findParent(currentEdge.dest, parent);
+
+        if (sourceParent != destParent)
+        {
+            output[count] = currentEdge;
+            count++;
+
+            parent[sourceParent] = destParent;
+        }
+        i++;
+    }
+
+    int sum = 0;
+    cout<<"The Minimum Spanning Tree according to kruskals algo is :"<<endl<<endl<<endl;
+    cout<<"Src"<<" "<< "Dest"<<" "<<"  Wt"<<endl;
+    for (int i = 0; i < n - 1; i++)
+    {
+        if (output[i].source < output[i].dest)
+        {
+            cout << output[i].source << "     " << output[i].dest<<"    " << output[i].weight<<endl;;
+            sum += output[i].weight;
+        }
+        else
+        {
+            cout << output[i].dest << "     " << output[i].source <<"    " <<output[i].weight<<endl;;
+             sum += output[i].weight;
+        }
+    }
+    cout << "\n\nThe sum of the MST is :" << sum;
+}
+
+int main()
+{
+    int n, E;
+    cin >> n >> E;
+    // input nava cha array banawala jo edge type cha aahe aani tyachi size E aahe
+    Edge *input = new Edge[E];
+
+    for (int i = 0; i < E; i++)
+    {
+        int s, d, w;
+        cin >> s >> d >> w;
+
+        // input array chya i th index chi baat ani pratek index war Edge cha obj aahe
+        input[i].source = s;
+        input[i].dest = d;
+        input[i].weight = w;
+    }
+
+    // input array ready zala
+
+    kruskals(input, n, E);
+    return 0;
+}
+
+/*
+6 11
+
+1 3 1
+0 1 2
+0 3 3
+0 2 4
+4 5 5
+2 3 6 
+3 5 7
+2 1 8
+2 4 9
+2 5 10
+3 4 11
+
+*/
+
+/*
+
+
+5 6
+0 1 2
+0 3 6
+1 3 8
+1 4 5
+1 2 3
+4 2 7
+
+*/
+
+/*
+
+Src Dest   Wt
+0     1    2
+1     2    3
+1     4    5
+0     3    6
+
+
+The sum of the MST is :16
+
+*/
