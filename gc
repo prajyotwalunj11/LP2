@@ -1,0 +1,71 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+void color(vector<vector<int>> graph, int n, int edges)
+{
+
+    int v_color[n];
+    int available[n];
+    for (int i = 0; i < n; i++)
+    {
+        v_color[i] = -1;
+        available[i] = 0;
+    }
+    v_color[0] = 0;
+    int chromatic_number = 0;
+
+    for (int i = 0; i < n; i++)
+    {
+        for (int v : graph[i])
+        {
+            if (v_color[v] != -1)
+            {
+                available[v_color[v]] = 1;
+            }
+        }
+
+        int cr;
+        for (cr = 0; cr < n; cr++)
+        {
+            if (available[cr] == 0)
+            {
+                v_color[i] = cr;
+                break;
+            }
+        }
+
+        chromatic_number = max(chromatic_number, cr + 1);
+        for (int j = 0; j < n; j++)
+        {
+            available[j] = 0;
+        }
+    }
+
+    for (int i = 0; i < n; i++)
+    {
+        cout << v_color[i] << " ";
+    }
+    cout << endl
+         << "chromatic number= " << chromatic_number;
+}
+
+int main()
+{
+    int n, edges;
+    cout << "Enter no. of vertices--> ";
+    cin >> n;
+    cout << "Enter no. of edges--> ";
+    cin >> edges;
+    vector<vector<int>> g(n);
+    cout << "Enter source,destination--> \n";
+    for (int i = 0; i < edges; i++)
+    {
+        int a, b;
+        cin >> a >> b;
+        g[a].push_back(b);
+        g[b].push_back(a);
+    }
+    color(g, n, edges);
+    return 0;
+}
